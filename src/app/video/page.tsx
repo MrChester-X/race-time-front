@@ -1,52 +1,52 @@
 "use client";
 
-import { ChangeEvent, useEffect, useState } from 'react'
-import { Race } from '@/utils/race.class'
-import axios from 'axios'
+import { ChangeEvent, useState } from "react";
+import RaceElement from "@/app/video/RaceElement";
+import { Race } from "@/app/video/classes/race.class";
 
 export default function Video() {
-    const [file, setFile] = useState<File | null>(null);
-    const [url, setUrl] = useState<string | null>(null);
-    const [race, setRace] = useState<any | null>(null);
-    const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || !e.target.files.length) {
-            return;
+  const [file, setFile] = useState<File | null>(null);
+  const [checked, setChecked] = useState<boolean>(false);
+  const [, setRace] = useState<Race | null>(null);
+  const [secondRace, setSecondRace] = useState<Race | null>(null);
+
+  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !e.target.files.length) {
+      return;
+    }
+    setFile(e.target.files[0]);
+  };
+  const handleButton = () => {
+    console.log("клик");
+  };
+
+  return (
+    <div className="flex flex-col gap-10">
+      <RaceElement
+        setRace={
+          !secondRace
+            ? setRace
+            : (oldRace) => {
+                const kartsMap = secondRace.drivers.reduce((acc, driver) => {
+                  const karts = driver.getKarts();
+                  return Object.assign(acc, { [karts[0]]: karts.at(-1) });
+                }, {});
+                oldRace.drivers.forEach((driver) => (driver.startKart = kartsMap[driver.startKart]));
+                oldRace.processPitlane();
+                console.log("changed", kartsMap);
+                return oldRace;
+              }
         }
-        setFile(e.target.files[0])
-    }
-    const handleButton = () => {
-        console.log('клик');
-    }
-    const handleUrl = (e: ChangeEvent<HTMLInputElement>) => {
-        setUrl(e.currentTarget.value);
-    }
-    useEffect(() => {
-        const handle = async () => {
-            if (!url) {
-                return;
-            }
-            console.log(url);
-            const race = await axios.get(`http://localhost:3010/parser?url=${url}`) as any;
-            setRace(race.data);
-        }
-        const interval = setInterval(() => handle().catch(console.error), 1e3);
-        handle().catch(console.error);
-        return () => clearInterval(interval);
-    }, [url])
-    return <div>
-        <input type="file" accept="video/mp4" onChange={handleInput} />
-        <br/>
-        {file?.name}
-        <br/>
-        <button className="bg-white text-blue-600 rounded-xl p-5" onClick={handleButton}>Жеска нагрузить пк Платона шоб не втыкал</button>
-        <br/>
-        <div className="mt-10 whitespace-pre-wrap">
-            <input accept="text" onChange={handleUrl} placeholder="url" />
-            <br/>
-            {/*{JSON.stringify(race)}*/}
-            {race && race.drivers.map(driver => `${driver.name} ${driver.karts.join(' -> ')}`).join('\n')}
-            <br/>
-            Питы: {race && race.pitlane[0].join(", ")}
-        </div>
+      />
+      <div>
+        <input type="checkbox" checked={checked} onChange={(event) => setChecked(event.target.checked)} /> Учитывать предыдущий заезд
+        {checked && <RaceElement setRace={setSecondRace} />}
+      </div>
+      <input type="file" accept="video/mp4" onChange={handleInput} />
+      {file?.name}
+      <button className="bg-white text-blue-600 rounded-xl p-5 w-[400px]" onClick={handleButton}>
+        Жеска нагрузить пк Платона шоб не втыкал
+      </button>
     </div>
+  );
 }

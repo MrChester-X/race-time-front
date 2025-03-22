@@ -1,8 +1,17 @@
-import { Driver } from './driver.class';
-import { Utils } from './Utils';
+import { Driver } from "./driver.class";
+import { DriverLapDto } from "../dto/DriverLapDto";
+import { Utils } from "@/utils/Utils";
 
 export class DriverLap {
-  constructor(public driver: Driver, public count: number, public time: number, public stintText?: string) {}
+  constructor(
+    public driver: Driver,
+    public count: number,
+    public time: number,
+    public stintText?: string,
+  ) {}
+
+  kart!: string;
+  pitlane!: string[];
 
   getAbsoluteStartTime(): number {
     return this.driver.laps.slice(0, this.count).reduce((total, lap) => total + lap.time, 0);
@@ -22,6 +31,18 @@ export class DriverLap {
   }
 
   isPit(): boolean {
-    return this.time >= 45 && this.time <= 70;
+    return this.time >= 50 && this.time <= 70;
+  }
+
+  toDto(): DriverLapDto {
+    return {
+      count: this.count,
+      time: this.time,
+      stintText: this.stintText,
+    };
+  }
+
+  static fromDto(dto: DriverLapDto, driver: Driver) {
+    return new DriverLap(driver, dto.count, dto.time, dto.stintText);
   }
 }
