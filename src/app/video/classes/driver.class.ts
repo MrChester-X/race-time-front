@@ -11,6 +11,21 @@ export class Driver {
     public laps: DriverLap[] = [],
   ) {}
 
+  getStintLaps() {
+    return this.laps.length - this.laps.findLastIndex((lap) => lap.isPit()) - 1;
+  }
+
+  getMaxStingLaps() {
+    const laps = this.laps.length;
+    const stintLaps = this.getStintLaps();
+    const totalLaps = 60;
+    const minStintLaps = 10;
+    const stintsMaxCount = 3;
+    const stintsCount = this.laps.filter((lap) => lap.isPit()).length + 1;
+    const maxStintLaps = totalLaps - (laps - stintLaps) - (stintsMaxCount - stintsCount) * minStintLaps;
+    return maxStintLaps;
+  }
+
   getKarts() {
     return this.laps.map((lap) => lap.kart).filter((kart, index, karts) => kart != karts[index + 1]);
   }

@@ -2,6 +2,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { Race } from "@/app/video/classes/race.class";
 import axios from "axios";
 import { RaceDto } from "@/app/video/dto/RaceDto";
+import KartElement from "@/app/video/KartElement";
 
 const RaceElement = ({ setRace }: { setRace: (race: Race) => void | Race }) => {
   const [elementRace, setElementRace] = useState<Race | null>(null);
@@ -55,9 +56,34 @@ const RaceElement = ({ setRace }: { setRace: (race: Race) => void | Race }) => {
           <input className="text-black w-[450px]" accept="text" onChange={handlePitlane} placeholder="" />
           <div>Карты в питах</div>
         </div>
-        <div>{elementRace && elementRace.drivers.map((driver) => `${driver.name} ${driver.getKarts().join(" -> ")}`).join("\n")}</div>
+        {elementRace && (
+          <table className="table-auto w-fit mt-3">
+            <tbody>
+              {elementRace.drivers.map((driver, index) => (
+                <tr key={index} className="">
+                  <td>
+                    <div className="flex items-center font-bold">{driver.name}</div>
+                  </td>
+                  <td>
+                    <div className="pl-4 pr-4">
+                      {driver.getStintLaps()}l / {driver.getMaxStingLaps()}l
+                    </div>
+                  </td>
+                  {driver.getKarts().map((kart, index) => (
+                    <td key={index} className="pl-4 font-light">
+                      <KartElement count={kart} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
-      <div>Питы: {elementRace && elementRace.getPitlane().join(", ")}</div>
+      <div className="flex flex-row gap-2 items-center">
+        <div>Питы</div>
+        {elementRace && elementRace.getPitlane().map((kart, index) => <KartElement key={index} count={kart} />)}
+      </div>
     </div>
   );
 };
