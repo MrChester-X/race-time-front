@@ -18,12 +18,16 @@ export class Driver {
   getMaxStingLaps() {
     const laps = this.laps.length;
     const stintLaps = this.getStintLaps();
-    const totalLaps = 60;
-    const minStintLaps = 10;
-    const stintsMaxCount = 3;
+    const totalLaps = 145;
+    const minStintLaps = 0;
+    const stintsMaxCount = 6;
     const stintsCount = this.laps.filter((lap) => lap.isPit()).length + 1;
     const maxStintLaps = totalLaps - (laps - stintLaps) - (stintsMaxCount - stintsCount) * minStintLaps;
     return maxStintLaps;
+  }
+
+  getStintBest() {
+    return Math.min(...this.laps.filter(lap => lap.isCurrentStint()).map(lap => lap.time));
   }
 
   getKarts() {

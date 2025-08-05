@@ -3,6 +3,8 @@ import { RaceDto } from "../dto/RaceDto";
 
 export class Race {
   drivers: Driver[] = [];
+  karts: {[kart: string]: number} = {};
+  kartsOrder: string[] = [];
 
   constructor(public startPitlane?: string[]) {}
 
@@ -33,6 +35,20 @@ export class Race {
       lap.pitlane = pitlane.slice();
       lap.kart = driversKarts[lap.driver.index];
     }
+
+    // TODO: to refactor
+    for (const driver of this.drivers) {
+      this.karts[driver.startKart] = 1000;
+    }
+    for (const lap of this.getLaps()) {
+      if (!lap.isCurrentStint()) {
+        continue;
+      }
+      this.karts[lap.kart] = Math.min(this.karts[lap.kart], lap.time);
+    }
+    console.log(this.karts['1'])
+    this.kartsOrder = Object.keys(this.karts).sort((a, b) => this.karts[a] - this.karts[b]);
+    console.log(this.kartsOrder);
   }
 
   getPitlane() {

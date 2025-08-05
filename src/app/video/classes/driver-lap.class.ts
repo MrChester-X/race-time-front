@@ -30,8 +30,25 @@ export class DriverLap {
     return `№${this.count + 1} ${Utils.timeToText(this.time)}`;
   }
 
+  getPreviousLap() {
+    const index = this.driver.laps.indexOf(this);
+    if (index <= 0) {
+      return null;
+    }
+    return this.driver.laps[index - 1];
+  }
+
+  isCurrentStint() {
+    const stintIndex = this.driver.laps!.findLastIndex(lap => lap.isPit());
+    return this.count > stintIndex;
+  }
+
   isPit(): boolean {
-    return this.time >= 50 && this.time <= 70;
+    // const previousLap = this.getPreviousLap();
+    // if (previousLap && previousLap.time >= 120 && previousLap.time <= 130) {
+    //   return true;
+    // }
+    return (this.time >= 90 && this.time <= 190);
   }
 
   toDto(): DriverLapDto {

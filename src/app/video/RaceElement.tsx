@@ -59,8 +59,8 @@ const RaceElement = ({ setRace }: { setRace: (race: Race) => void | Race }) => {
         {elementRace && (
           <table className="table-auto w-fit mt-3">
             <tbody>
-              {elementRace.drivers.map((driver, index) => (
-                <tr key={index} className="">
+              {elementRace.drivers.sort((a, b) => a.getStintBest() - b.getStintBest()) .map((driver) => (
+                <tr key={driver.index} className="">
                   <td>
                     <div className="flex items-center font-bold">{driver.name}</div>
                   </td>
@@ -69,9 +69,19 @@ const RaceElement = ({ setRace }: { setRace: (race: Race) => void | Race }) => {
                       {driver.getStintLaps()}l / {driver.getMaxStingLaps()}l
                     </div>
                   </td>
+                  <td>
+                    <div className="pl-4 pr-4">
+                      {driver.laps.at(-1).time.toFixed(3)}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="pl-4 pr-4">
+                      SB {driver.getStintBest().toFixed(3)}
+                    </div>
+                  </td>
                   {driver.getKarts().map((kart, index) => (
                     <td key={index} className="pl-4 font-light">
-                      <KartElement count={kart} />
+                      <KartElement race={elementRace} count={kart}/>
                     </td>
                   ))}
                 </tr>
@@ -82,7 +92,7 @@ const RaceElement = ({ setRace }: { setRace: (race: Race) => void | Race }) => {
       </div>
       <div className="flex flex-row gap-2 items-center">
         <div>Питы</div>
-        {elementRace && elementRace.getPitlane().map((kart, index) => <KartElement key={index} count={kart} />)}
+        {elementRace && elementRace.getPitlane().map((kart, index) => <KartElement race={elementRace} key={index} count={kart} />)}
       </div>
     </div>
   );
