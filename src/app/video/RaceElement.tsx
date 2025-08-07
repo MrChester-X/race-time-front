@@ -59,33 +59,31 @@ const RaceElement = ({ setRace }: { setRace: (race: Race) => void | Race }) => {
         {elementRace && (
           <table className="table-auto w-fit mt-3">
             <tbody>
-              {elementRace.drivers.sort((a, b) => a.getStintBest() - b.getStintBest()) .map((driver) => (
-                <tr key={driver.index} className="">
-                  <td>
-                    <div className="flex items-center font-bold">{driver.name}</div>
-                  </td>
-                  <td>
-                    <div className="pl-4 pr-4">
-                      {driver.getStintLaps()}l / {driver.getMaxStingLaps()}l
-                    </div>
-                  </td>
-                  <td>
-                    <div className="pl-4 pr-4">
-                      {driver.laps.at(-1).time.toFixed(3)}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="pl-4 pr-4">
-                      SB {driver.getStintBest().toFixed(3)}
-                    </div>
-                  </td>
-                  {driver.getKarts().map((kart, index) => (
-                    <td key={index} className="pl-4 font-light">
-                      <KartElement race={elementRace} count={kart}/>
+              {elementRace.drivers
+                .sort((a, b) => a.getStintBest() - b.getStintBest())
+                .map((driver) => (
+                  <tr key={driver.index} className="">
+                    <td>
+                      <div className="flex items-center font-bold">{driver.name}</div>
                     </td>
-                  ))}
-                </tr>
-              ))}
+                    <td>
+                      <div className="pl-4 pr-4">
+                        {driver.getStintLaps()}l / {driver.getMaxStingLaps()}l
+                      </div>
+                    </td>
+                    <td>
+                      <div className="pl-4 pr-4">{driver.laps.at(-1)!.time.toFixed(3)}</div>
+                    </td>
+                    <td>
+                      <div className="pl-4 pr-4">SB {driver.getStintBest().toFixed(3)}</div>
+                    </td>
+                    {driver.getKarts().map((kart, index) => (
+                      <td key={index} className="pl-4 font-light">
+                        <KartElement race={elementRace} count={kart} />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
             </tbody>
           </table>
         )}

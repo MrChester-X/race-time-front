@@ -1,4 +1,4 @@
-import { Race } from '@/app/video/classes/race.class'
+import { Race } from "@/app/video/classes/race.class";
 
 const kartsMap = {
   // "1": "#999900",
@@ -33,34 +33,35 @@ const kartsMap = {
   "25": "#999900",
   "11": "#999900",
   "38": "#999900",
-};
+} as { [kart: string]: string };
 
-const KartElement = ({ race, count }: { race: Race, count: string }) => {
+const KartElement = ({ race, count }: { race: Race; count: string }) => {
   const getKartColor = (kart: string) => {
     if (!race.kartsOrder) {
-      return '#003366';
+      return "#003366";
     }
     const index = race.kartsOrder.indexOf(kart);
     if (index < 0) {
-      return '#003366';
+      return "#003366";
     }
     if (index <= 4) {
-      return '#003300';
+      return "#003300";
     }
     if (index <= 9) {
-      return '#999900';
+      return "#999900";
     }
-    return '#660000';
-  }
+    return "#660000";
+  };
 
   return (
     <div className="flex gap-1">
-      <div style={{backgroundColor: kartsMap[count] || "#003366"}}
-           className={`flex justify-center items-center w-8 h-8 rounded-full`}>
+      <div style={{ backgroundColor: kartsMap[count] || "#003366" }} className={`flex justify-center items-center w-8 h-8 rounded-full`}>
         {count}
       </div>
-      <div style={{backgroundColor: getKartColor(count) || "#003366"}}
-           className={`flex justify-center items-center w-8 h-8 rounded-full`}>
+      <div
+        style={{ backgroundColor: getKartColor(count) || "#003366" }}
+        className={`flex justify-center items-center w-8 h-8 rounded-full`}
+      >
         {count}
       </div>
     </div>

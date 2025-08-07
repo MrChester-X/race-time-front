@@ -30,7 +30,7 @@ export default function Video() {
                 const kartsMap = secondRace.drivers.reduce((acc, driver) => {
                   const karts = driver.getKarts();
                   return Object.assign(acc, { [karts[0]]: karts.at(-1) });
-                }, {});
+                }, {}) as { [kart: string]: string };
                 oldRace.drivers.forEach((driver) => (driver.startKart = kartsMap[driver.startKart]));
                 oldRace.processPitlane();
                 console.log("changed", kartsMap);

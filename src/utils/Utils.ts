@@ -46,7 +46,7 @@ export class Utils {
     return seconds.toFixed(3);
   }
 
-  static makeSound(text: string) {
+  static makeSound(_text: string) {
     // const voice = new gtts(text, 'ru');
     // voice.save('voice.mp3', () =>
     //     exec('afplay /Users/p.bulychev/Documents/Projects/Other/telegram-race-time/voice.mp3'),
