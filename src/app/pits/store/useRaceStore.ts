@@ -35,6 +35,10 @@ interface RaceStore {
   // Event actions
   addEvent: (kart: string, lane: number, insertIndex: number) => boolean;
   deleteEvent: (eventIndex: number) => void;
+
+  // Data management actions
+  clearRaceData: () => void;
+  loadTestData: () => void;
 }
 
 export const useRaceStore = create<RaceStore>((set, get) => ({
@@ -193,6 +197,27 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
     };
 
     get().setRaceData(updatedRaceData);
+    get().saveRaceData();
+  },
+
+  // Data management actions
+  clearRaceData: () => {
+    const { raceData } = get();
+    if (!raceData) return;
+
+    const clearedData: RaceData = {
+      ...raceData,
+      events: [],
+      teams: [],
+      kartColors: {},
+    };
+
+    get().setRaceData(clearedData);
+    get().saveRaceData();
+  },
+
+  loadTestData: () => {
+    get().setRaceData(TestRaceData);
     get().saveRaceData();
   },
 }));

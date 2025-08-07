@@ -29,9 +29,15 @@ export default function TeamsList() {
 
   if (!teams) return null;
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex items-center justify-between">
-        <div>Команды</div>
+    <section className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 shadow-2xl">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-400 rounded-lg flex items-center justify-center">
+            👥
+          </div>
+          <h2 className="text-xl font-bold text-white">Команды</h2>
+          <div className="flex-1 h-px bg-gradient-to-r from-white/20 to-transparent ml-4"></div>
+        </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2"
@@ -54,6 +60,6 @@ export default function TeamsList() {
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleAddTeam}
       />
-    </div>
+    </section>
   );
 }

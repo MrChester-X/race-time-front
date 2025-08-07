@@ -21,7 +21,7 @@ export default function TeamRow({ team }: TeamRowProps) {
     <div className="flex flex-row h-11 border-b border-gray-500 w-full relative">
       {/* Text zone - bottom aligned */}
       <div className="flex items-end pb-1">
-        <div className="mr-5 text-[#faef66] font-bold">{team.karts[0].padStart(2, "0")}</div>
+        <div className="mr-5 w-[35px] text-[#faef66] font-bold">{team.karts[0].padStart(2, "0")}</div>
         <div className="w-[200px] flex-none mr-5 font-bold overflow-hidden whitespace-nowrap">{team.name}</div>
       </div>
 

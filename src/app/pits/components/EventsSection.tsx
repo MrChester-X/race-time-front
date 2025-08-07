@@ -20,14 +20,16 @@ export default function EventsSection() {
   const reversedEvents = [...events].reverse();
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex items-center justify-between">
-        <div>События</div>
-        <div className="text-sm text-gray-500">
-          Всего: {events.length} • Показаны сначала новые
+    <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 shadow-2xl">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-400 rounded-lg flex items-center justify-center">⚡</div>
+          <h2 className="text-xl font-bold text-white">События</h2>
+          <div className="flex-1 h-px bg-gradient-to-r from-white/20 to-transparent ml-4"></div>
         </div>
+        <div className="text-sm text-gray-400">Всего: {events.length} • Показаны сначала новые</div>
       </div>
-      
+
       <div className="space-y-6">
         {/* Add button before first event */}
         <div className="flex justify-center">
@@ -48,12 +50,7 @@ export default function EventsSection() {
               const originalIndex = events.length - 1 - displayIndex;
               return (
                 <div key={`event-${originalIndex}`} className="relative group/event">
-                  <Event 
-                    event={event} 
-                    eventIndex={originalIndex}
-                    eventNumber={reversedEvents.length - displayIndex}
-                  />
-                  
+                  <Event event={event} eventIndex={originalIndex} eventNumber={reversedEvents.length - displayIndex} />
                   {/* Floating add button after each event (except last) */}
                   {displayIndex < reversedEvents.length - 1 && (
                     <button
@@ -68,7 +65,7 @@ export default function EventsSection() {
               );
             })}
           </div>
-          
+
           {/* Floating add button for adding to start */}
           {events.length > 0 && (
             <div className="flex justify-center mt-4">
@@ -84,11 +81,7 @@ export default function EventsSection() {
         </div>
       </div>
 
-      <AddEventModal
-        isOpen={isAddModalOpen}
-        insertIndex={insertIndex}
-        onClose={() => setIsAddModalOpen(false)}
-      />
+      <AddEventModal isOpen={isAddModalOpen} insertIndex={insertIndex} onClose={() => setIsAddModalOpen(false)} />
     </div>
   );
 }
