@@ -11,19 +11,19 @@ interface PitlaneVisualizationProps {
 
 export default function PitlaneVisualization({ event, eventIndex }: PitlaneVisualizationProps) {
   const { raceData } = useRaceStore();
-  
+
   if (!raceData) return null;
 
   // Рассчитываем состояние питлейна ДО этого события
   const calculatePitlaneStateBefore = () => {
     const pitlane = structuredClone(raceData.startPitlane);
     const teams: { [startKart: string]: string[] } = {};
-    
+
     // Инициализируем команды
-    raceData.teams.forEach(team => {
+    raceData.teams.forEach((team) => {
       teams[team.startKart] = [team.startKart];
     });
-    
+
     // Применяем все события ДО текущего (не включая)
     for (let i = 0; i < eventIndex; i++) {
       const prevEvent = raceData.events[i];
@@ -37,7 +37,7 @@ export default function PitlaneVisualization({ event, eventIndex }: PitlaneVisua
         }
       }
     }
-    
+
     return pitlane;
   };
 
@@ -45,36 +45,35 @@ export default function PitlaneVisualization({ event, eventIndex }: PitlaneVisua
 
   return (
     <div className="mt-4 p-3 bg-blue-800/20 rounded-lg border border-blue-700/30">
-      <div className="text-blue-200 text-xs font-medium mb-3">
-        Состояние питлейна до въезда:
-      </div>
-      
+      <div className="text-blue-200 text-xs font-medium mb-3">Питлейн:</div>
+
       <div className="space-y-2">
         {pitlaneBefore.map((lane, laneIndex) => (
-          <div 
+          <div
             key={laneIndex}
             className={`
               flex items-center gap-3 p-2 rounded transition-all
-              ${laneIndex === event.lane 
-                ? 'bg-yellow-500/20 border border-yellow-500/50' 
-                : 'bg-blue-700/20'
-              }
+              ${laneIndex === event.lane ? "bg-yellow-500/20 border border-yellow-500/50" : "bg-blue-700/20"}
             `}
           >
             {/* Название питлейна */}
-            <div className={`
+            <div
+              className={`
               font-bold text-sm min-w-[20px]
-              ${laneIndex === event.lane ? 'text-yellow-200' : 'text-blue-200'}
-            `}>
+              ${laneIndex === event.lane ? "text-yellow-200" : "text-blue-200"}
+            `}
+            >
               {Utils.getLaneLetter(laneIndex)}
             </div>
-            
+
             {/* Стрелка направления */}
-            <ArrowLeftIcon className={`
+            <ArrowLeftIcon
+              className={`
               w-4 h-4 
-              ${laneIndex === event.lane ? 'text-yellow-300' : 'text-blue-300'}
-            `} />
-            
+              ${laneIndex === event.lane ? "text-yellow-300" : "text-blue-300"}
+            `}
+            />
+
             {/* Карты в очереди */}
             <div className="flex items-center gap-1 flex-1">
               {lane.length === 0 ? (
@@ -86,7 +85,7 @@ export default function PitlaneVisualization({ event, eventIndex }: PitlaneVisua
                   </div>
                 ))
               )}
-              
+
               {/* Призрачный кружок для въезжающего карта */}
               {laneIndex === event.lane && (
                 <div className="mr-1">
