@@ -31,6 +31,10 @@ interface RaceStore {
   // Team actions
   addTeam: (name: string, startKart: string) => boolean;
   deleteTeam: (team: ParsedRaceTeam) => void;
+
+  // Event actions
+  addEvent: (kart: string, lane: number, insertIndex: number) => boolean;
+  deleteEvent: (eventIndex: number) => void;
 }
 
 export const useRaceStore = create<RaceStore>((set, get) => ({
@@ -125,6 +129,57 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
       ...raceData,
       teams: raceData.teams.filter((t) => t.startKart !== team.startKart),
       events: raceData.events.filter((event) => event.kart !== team.startKart),
+    };
+
+    get().setRaceData(updatedRaceData);
+    get().saveRaceData();
+  },
+
+  // Event actions
+  addEvent: (kart: string, lane: number, insertIndex: number): boolean => {
+    const { raceData } = get();
+    if (!raceData) return false;
+
+    // Check if team exists
+    const team = raceData.teams.find((t) => t.startKart === kart);
+    if (!team) return false;
+
+    const newEvent = {
+      type: "pit" as const,
+      kart,
+      lane,
+    };
+
+    const newEvents = [...raceData.events];
+    
+    if (insertIndex === -1) {
+      // Add to the end
+      newEvents.push(newEvent);
+    } else {
+      // Insert at specific position
+      newEvents.splice(insertIndex, 0, newEvent);
+    }
+
+    const updatedRaceData = {
+      ...raceData,
+      events: newEvents,
+    };
+
+    get().setRaceData(updatedRaceData);
+    get().saveRaceData();
+    return true;
+  },
+
+  deleteEvent: (eventIndex: number) => {
+    const { raceData } = get();
+    if (!raceData || eventIndex < 0 || eventIndex >= raceData.events.length) return;
+
+    const newEvents = [...raceData.events];
+    newEvents.splice(eventIndex, 1);
+
+    const updatedRaceData = {
+      ...raceData,
+      events: newEvents,
     };
 
     get().setRaceData(updatedRaceData);
