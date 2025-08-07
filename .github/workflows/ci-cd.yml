@@ -1,0 +1,183 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Проверка качества кода и сборка
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run ESLint
+      run: npm run lint
+      
+    - name: Run TypeScript check
+      run: npx tsc --noEmit
+      
+    - name: Build application
+      run: npm run build
+      
+    - name: Test build output
+      run: |
+        if [ ! -d ".next" ]; then
+          echo "Build failed: .next directory not found"
+          exit 1
+        fi
+        echo "Build successful!"
+
+  # Деплой на VDS сервер (только с main ветки)
+  deploy:
+    name: Deploy to VDS
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build for production
+      run: npm run build
+      
+    - name: Create deployment package
+      run: |
+        mkdir -p deploy
+        cp -r .next deploy/
+        cp -r public deploy/
+        cp package*.json deploy/
+        cp next.config.ts deploy/
+        
+        # Создаем скрипт для запуска на сервере
+        cat > deploy/start.sh << 'EOF'
+        #!/bin/bash
+        set -e
+        
+        echo "🚀 Starting deployment process..."
+        
+        # Установка зависимостей (только production)
+        npm ci --only=production
+        
+        # Остановка старого процесса
+        pm2 stop race-time-front || true
+        pm2 delete race-time-front || true
+        
+        # Запуск нового
+        pm2 start npm --name "race-time-front" -- start
+        pm2 save
+        
+        echo "✅ Deployment completed successfully!"
+        EOF
+        
+        chmod +x deploy/start.sh
+        
+    - name: Deploy to VDS Server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        script: |
+          # Создаем директорию для приложения
+          mkdir -p ${{ secrets.DEPLOY_PATH || '/var/www/race-time-front' }}
+          
+          # Backup предыдущей версии
+          if [ -d "${{ secrets.DEPLOY_PATH || '/var/www/race-time-front' }}/current" ]; then
+            mv ${{ secrets.DEPLOY_PATH || '/var/www/race-time-front' }}/current ${{ secrets.DEPLOY_PATH || '/var/www/race-time-front' }}/backup-$(date +%Y%m%d-%H%M%S) || true
+          fi
+          
+          # Создаем новую директорию
+          mkdir -p ${{ secrets.DEPLOY_PATH || '/var/www/race-time-front' }}/current
+          
+    - name: Copy files to server
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        source: "deploy/*"
+        target: ${{ secrets.DEPLOY_PATH || '/var/www/race-time-front' }}/current/
+        strip_components: 1
+        
+    - name: Start application
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        script: |
+          cd ${{ secrets.DEPLOY_PATH || '/var/www/race-time-front' }}/current
+          
+          # Устанавливаем Node.js если не установлен
+          if ! command -v node &> /dev/null; then
+            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+          fi
+          
+          # Устанавливаем PM2 если не установлен
+          if ! command -v pm2 &> /dev/null; then
+            npm install -g pm2
+          fi
+          
+          # Запускаем скрипт деплоя
+          chmod +x start.sh
+          ./start.sh
+          
+    - name: Cleanup old backups
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        script: |
+          # Оставляем только последние 3 бэкапа
+          cd ${{ secrets.DEPLOY_PATH || '/var/www/race-time-front' }}
+          ls -t backup-* 2>/dev/null | tail -n +4 | xargs rm -rf {} + 2>/dev/null || true
+          
+    - name: Health check
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        script: |
+          # Проверяем что приложение запустилось
+          sleep 10
+          if pm2 show race-time-front | grep -q "online"; then
+            echo "✅ Application is running successfully!"
+            pm2 logs race-time-front --lines 10
+          else
+            echo "❌ Application failed to start!"
+            pm2 logs race-time-front --lines 20
+            exit 1
+          fi
