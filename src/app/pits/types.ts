@@ -28,4 +28,5 @@ export interface RaceData {
   teams: RaceTeam[];
   pitlanesCount: number;
   startPitlane: string[][];
+  kartColors?: { [kart: string]: number };
 }

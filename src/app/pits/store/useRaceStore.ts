@@ -71,9 +71,11 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
     }
 
     set({
+      raceData: data,
       teams: newTeams,
       pitlane: newPitlane,
       events: newEvents,
+      kartColors: data.kartColors || {},
     });
   },
 
@@ -84,17 +86,25 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
   },
 
   saveRaceData: () => {
-    const { raceData } = get();
+    const { raceData, kartColors } = get();
     if (raceData) {
-      console.log(raceData);
-      localStorage.setItem("raceData", JSON.stringify(raceData));
+      const dataToSave = {
+        ...raceData,
+        kartColors,
+      };
+      console.log(dataToSave);
+      localStorage.setItem("raceData", JSON.stringify(dataToSave));
     }
   },
 
   // Kart actions
   setFocusKart: (kart: string | null) => set({ focusKart: kart }),
 
-  setKartColors: (colors: { [kart: string]: number }) => set({ kartColors: colors }),
+  setKartColors: (colors: { [kart: string]: number }) => {
+    set({ kartColors: colors });
+    // Auto-save race data with updated kart colors
+    get().saveRaceData();
+  },
 
   // Team actions
   addTeam: (name: string, startKart: string): boolean => {

@@ -52,4 +52,5 @@ export const TestRaceData: RaceData = {
     ["101", "102"],
     ["103", "104"],
   ],
+  kartColors: {},
 };
