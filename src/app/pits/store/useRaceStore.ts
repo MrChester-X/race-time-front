@@ -17,7 +17,6 @@ interface RaceStore {
 
   // UI state
   focusKart: string | null;
-  kartColors: { [kart: string]: number };
 
   // Actions
   setRaceData: (data: RaceData) => void;
@@ -48,10 +47,15 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
   teams: null,
   events: null,
   focusKart: null,
-  kartColors: {},
 
   // Core data actions
   setRaceData: (data: RaceData) => {
+    // Убеждаемся что у данных есть kartColors
+    data = {
+      ...data,
+      kartColors: data.kartColors || {},
+    };
+
     set({ raceData: data });
 
     // Process the data
@@ -79,7 +83,6 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
       teams: newTeams,
       pitlane: newPitlane,
       events: newEvents,
-      kartColors: data.kartColors || {},
     });
   },
 
@@ -90,14 +93,10 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
   },
 
   saveRaceData: () => {
-    const { raceData, kartColors } = get();
+    const { raceData } = get();
     if (raceData) {
-      const dataToSave = {
-        ...raceData,
-        kartColors,
-      };
-      console.log(dataToSave);
-      localStorage.setItem("raceData", JSON.stringify(dataToSave));
+      console.log(raceData);
+      localStorage.setItem("raceData", JSON.stringify(raceData));
     }
   },
 
@@ -105,9 +104,15 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
   setFocusKart: (kart: string | null) => set({ focusKart: kart }),
 
   setKartColors: (colors: { [kart: string]: number }) => {
-    set({ kartColors: colors });
-    // Auto-save race data with updated kart colors
-    get().saveRaceData();
+    const { raceData } = get();
+    if (raceData) {
+      const updatedRaceData = {
+        ...raceData,
+        kartColors: colors,
+      };
+      set({ raceData: updatedRaceData });
+      get().saveRaceData();
+    }
   },
 
   // Team actions
@@ -165,7 +170,7 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
     };
 
     const newEvents = [...raceData.events];
-    
+
     if (insertIndex === -1) {
       // Add to the end
       newEvents.push(newEvent);
@@ -209,7 +214,7 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
       ...raceData,
       events: [],
       teams: [],
-      kartColors: {},
+      kartColors: {}, // Специально сбрасываем цвета при очистке
     };
 
     get().setRaceData(clearedData);
