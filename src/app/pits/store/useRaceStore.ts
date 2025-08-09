@@ -18,6 +18,9 @@ interface RaceStore {
   // UI state
   focusKart: string | null;
 
+  // Undo functionality
+  undoHistory: RaceData[];
+
   // Actions
   setRaceData: (data: RaceData) => void;
   loadInitialData: () => void;
@@ -35,6 +38,9 @@ interface RaceStore {
   addEvent: (kart: string, lane: number, insertIndex: number) => boolean;
   deleteEvent: (eventIndex: number) => void;
 
+  // Undo functionality
+  undoLastAction: () => boolean;
+
   // Data management actions
   clearRaceData: () => void;
   loadTestData: () => void;
@@ -47,6 +53,7 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
   teams: null,
   events: null,
   focusKart: null,
+  undoHistory: [],
 
   // Core data actions
   setRaceData: (data: RaceData) => {
@@ -156,12 +163,15 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
 
   // Event actions
   addEvent: (kart: string, lane: number, insertIndex: number): boolean => {
-    const { raceData } = get();
+    const { raceData, undoHistory } = get();
     if (!raceData) return false;
 
     // Check if team exists
     const team = raceData.teams.find((t) => t.startKart === kart);
     if (!team) return false;
+
+    // Save current state to undo history before making changes
+    const newUndoHistory = [structuredClone(raceData), ...undoHistory.slice(0, 2)]; // Keep only last 3 states
 
     const newEvent = {
       type: "pit" as const,
@@ -184,6 +194,7 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
       events: newEvents,
     };
 
+    set({ undoHistory: newUndoHistory });
     get().setRaceData(updatedRaceData);
     get().saveRaceData();
     return true;
@@ -205,6 +216,20 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
     get().saveRaceData();
   },
 
+  // Undo functionality
+  undoLastAction: (): boolean => {
+    const { undoHistory } = get();
+    if (undoHistory.length === 0) return false;
+
+    const previousState = undoHistory[0];
+    const newUndoHistory = undoHistory.slice(1);
+
+    set({ undoHistory: newUndoHistory });
+    get().setRaceData(previousState);
+    get().saveRaceData();
+    return true;
+  },
+
   // Data management actions
   clearRaceData: () => {
     const { raceData } = get();
@@ -217,6 +242,7 @@ export const useRaceStore = create<RaceStore>((set, get) => ({
       kartColors: {}, // Специально сбрасываем цвета при очистке
     };
 
+    set({ undoHistory: [] }); // Очищаем историю отмены
     get().setRaceData(clearedData);
     get().saveRaceData();
   },

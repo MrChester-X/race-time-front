@@ -61,6 +61,13 @@ export default function Pits() {
               <div>События: {events.length}</div>
               <div className="text-gray-400">|</div>
               <div className="flex items-center gap-2">
+                <a
+                  href="/pits/focus"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200 text-xs font-bold"
+                  title="Переключиться в Режим волны"
+                >
+                  ⚡ РЕЖИМ ВОЛНЫ
+                </a>
                 <button
                   onClick={() => setIsLoadTestModalOpen(true)}
                   className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200 text-xs"
