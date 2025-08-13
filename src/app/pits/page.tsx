@@ -52,7 +52,7 @@ export default function Pits() {
               <APLogo width={32} height={32} className="rounded-lg shadow-lg" />
               <div>
                 <h1 className="text-xl font-bold text-white">Ace of Pace - Controlling Panel</h1>
-                <p className="text-blue-300 text-sm">Обогнать грипов сквозь дождь и дров</p>
+                <p className="text-blue-300 text-sm">Обогнать грипов сквозь дождь и кучу дров</p>
               </div>
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-300">
