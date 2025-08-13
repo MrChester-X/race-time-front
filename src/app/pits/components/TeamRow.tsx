@@ -18,31 +18,63 @@ export default function TeamRow({ team }: TeamRowProps) {
     setIsDeleteModalOpen(false);
   };
   return (
-    <div className="flex flex-row h-11 border-b border-gray-500 w-full relative">
-      {/* Text zone - bottom aligned */}
-      <div className="flex items-end pb-1">
-        <div className="mr-5 w-[35px] text-[#faef66] font-bold">{team.karts[0].padStart(2, "0")}</div>
-        <div className="w-[200px] flex-none mr-5 font-bold overflow-hidden whitespace-nowrap">{team.name}</div>
+    <>
+      {/* Desktop layout */}
+      <div className="hidden sm:flex flex-row min-h-11 border-b border-gray-500 w-full relative py-2">
+        {/* Text zone - bottom aligned */}
+        <div className="flex items-center">
+          <div className="mr-4 w-8 text-[#faef66] font-bold text-sm">{team.karts[0].padStart(2, "0")}</div>
+          <div className="w-48 flex-none mr-4 font-bold overflow-hidden whitespace-nowrap text-sm">{team.name}</div>
+        </div>
+
+        {/* Karts zone - center aligned */}
+        <div className="flex-1 flex items-center justify-start flex-wrap gap-2">
+          {team.karts.map((kart, index) => (
+            <div key={index}>
+              <Kart kart={kart} />
+            </div>
+          ))}
+        </div>
+
+        {/* Delete button zone - center aligned */}
+        <div className="flex items-center">
+          <button
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded-lg transition-all duration-200"
+            title="Удалить команду"
+          >
+            <TrashIcon className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
-      {/* Karts zone - center aligned */}
-      <div className="flex-1 flex items-center justify-start">
-        {team.karts.map((kart, index) => (
-          <div className="mr-3" key={index}>
-            <Kart kart={kart} />
+      {/* Mobile layout */}
+      <div className="sm:hidden border-b border-gray-500 w-full relative p-3">
+        {/* Header with team number, name and delete button */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#faef66] text-black font-bold text-sm rounded-lg flex items-center justify-center">
+              {team.karts[0].padStart(2, "0")}
+            </div>
+            <div className="font-bold text-white text-sm">{team.name}</div>
           </div>
-        ))}
-      </div>
+          <button
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded-lg transition-all duration-200"
+            title="Удалить команду"
+          >
+            <TrashIcon className="w-4 h-4" />
+          </button>
+        </div>
 
-      {/* Delete button zone - center aligned */}
-      <div className="flex items-center">
-        <button
-          onClick={() => setIsDeleteModalOpen(true)}
-          className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200"
-          title="Удалить команду"
-        >
-          <TrashIcon />
-        </button>
+        {/* Karts grid for mobile */}
+        <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+          {team.karts.map((kart, index) => (
+            <div key={index} className="flex justify-center">
+              <Kart kart={kart} />
+            </div>
+          ))}
+        </div>
       </div>
 
       <DeleteTeamModal
@@ -51,6 +83,6 @@ export default function TeamRow({ team }: TeamRowProps) {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
       />
-    </div>
+    </>
   );
 }

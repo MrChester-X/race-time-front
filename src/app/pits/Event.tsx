@@ -26,16 +26,16 @@ const Event = ({ event, eventIndex, eventNumber }: EventProps) => {
   if (event.type === "pit") {
     return (
       <>
-        <div className="group relative bg-gradient-to-r from-blue-600 to-blue-500 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all duration-200 w-full overflow-hidden">
+        <div className="group relative bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 rounded-xl p-3 shadow-lg hover:shadow-xl hover:shadow-orange-500/25 transition-all duration-200 w-full overflow-hidden">
           {/* Event number badge in corner */}
-          <div className="absolute top-0 right-0 bg-blue-800/90 text-blue-100 text-xs font-bold px-2 py-1 rounded-bl-lg backdrop-blur-sm">
+          <div className="absolute top-0 right-0 bg-red-800/90 text-orange-100 text-xs font-bold px-2 py-1 rounded-bl-lg backdrop-blur-sm">
             #{eventNumber}
           </div>
 
           {/* Delete button in top-left corner */}
           <button
             onClick={() => setIsDeleteModalOpen(true)}
-            className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 p-1 text-blue-200 hover:text-red-300 hover:bg-red-500/20 rounded transition-all duration-200 z-10"
+            className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 p-1 text-orange-200 hover:text-red-300 hover:bg-red-500/20 rounded transition-all duration-200 z-10"
             title="Удалить событие"
           >
             <TrashIcon className="w-3 h-3" />
@@ -44,8 +44,8 @@ const Event = ({ event, eventIndex, eventNumber }: EventProps) => {
           {/* Header */}
           <div className="flex items-center justify-center mb-2">
             <div className="flex items-center gap-1.5">
-              <KartChangeIcon className="w-4 h-4 text-blue-100" />
-              <span className="text-blue-100 font-medium text-sm">Пит #{event.pitCount}</span>
+              <KartChangeIcon className="w-4 h-4 text-orange-100" />
+              <span className="text-orange-100 font-medium text-sm">Пит #{event.pitCount}</span>
             </div>
           </div>
 
@@ -54,20 +54,20 @@ const Event = ({ event, eventIndex, eventNumber }: EventProps) => {
             <div className="text-white font-bold text-base">
               <span className="text-yellow-300">{event.team.startKart.padStart(2, "0")}</span> {event.team.name}
             </div>
-            <div className="text-blue-100 text-xs">
+            <div className="text-orange-100 text-xs">
               Питлейн {Utils.getLaneLetter(event.lane)} • Команда #{event.team.startKart.padStart(2, "0")}
             </div>
           </div>
 
           {/* Kart change */}
-          <div className="flex items-center justify-center gap-2 bg-blue-700/30 rounded-lg p-2">
+          <div className="flex items-center justify-center gap-2 bg-red-700/30 rounded-lg p-2">
             <div className="text-center flex flex-col items-center">
-              <div className="text-blue-200 text-xs mb-1">Заезжает</div>
+              <div className="text-orange-200 text-xs mb-1">Заезжает</div>
               <Kart kart={event.team.karts[event.pitCount - 1]} />
             </div>
-            <KartChangeIcon className="w-5 h-5 text-blue-200" />
+            <KartChangeIcon className="w-5 h-5 text-orange-200" />
             <div className="text-center flex flex-col items-center">
-              <div className="text-blue-200 text-xs mb-1">Выезжает</div>
+              <div className="text-orange-200 text-xs mb-1">Выезжает</div>
               <Kart kart={event.team.karts[event.pitCount]} />
             </div>
           </div>

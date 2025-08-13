@@ -20,14 +20,14 @@ export default function EventsSection() {
   const reversedEvents = [...events].reverse();
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 shadow-2xl">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/10 shadow-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-400 rounded-lg flex items-center justify-center">⚡</div>
-          <h2 className="text-xl font-bold text-white">События</h2>
-          <div className="flex-1 h-px bg-gradient-to-r from-white/20 to-transparent ml-4"></div>
+          <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">⚡</div>
+          <h2 className="text-lg sm:text-xl font-bold text-white">События</h2>
+          <div className="hidden sm:block flex-1 h-px bg-gradient-to-r from-white/20 to-transparent ml-4"></div>
         </div>
-        <div className="text-sm text-gray-400">Всего: {events.length} • Показаны сначала новые</div>
+        <div className="text-xs sm:text-sm text-gray-400">Всего: {events.length} • Показаны сначала новые</div>
       </div>
 
       <div className="space-y-6">
@@ -45,7 +45,7 @@ export default function EventsSection() {
 
         {/* Events grid - только события */}
         <div className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {reversedEvents.map((event, displayIndex) => {
               const originalIndex = events.length - 1 - displayIndex;
               return (

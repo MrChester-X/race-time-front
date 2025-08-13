@@ -29,21 +29,22 @@ export default function TeamsList() {
 
   if (!teams) return null;
   return (
-    <section className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 shadow-2xl">
-      <div className="flex items-center justify-between mb-6">
+    <section className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/10 shadow-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
         <div className="flex items-center gap-3">
           <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-400 rounded-lg flex items-center justify-center">
             👥
           </div>
-          <h2 className="text-xl font-bold text-white">Команды</h2>
-          <div className="flex-1 h-px bg-gradient-to-r from-white/20 to-transparent ml-4"></div>
+          <h2 className="text-lg sm:text-xl font-bold text-white">Команды</h2>
+          <div className="hidden sm:block flex-1 h-px bg-gradient-to-r from-white/20 to-transparent ml-4"></div>
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2"
+          className="bg-orange-500 hover:bg-orange-600 text-white px-3 sm:px-4 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
         >
-          <PlusIcon />
-          Добавить команду
+          <PlusIcon className="w-4 h-4" />
+          <span className="hidden sm:inline">Добавить команду</span>
+          <span className="sm:hidden">Добавить</span>
         </button>
       </div>
       <div className="flex flex-col justify-center mt-3 w-full">
