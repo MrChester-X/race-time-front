@@ -1,0 +1,54 @@
+{
+  "name": "Ace of Pace - Racing Control System",
+  "short_name": "Ace of Pace",
+  "description": "Система управления гонками. Контролируйте питстопы, отслеживайте команды и управляйте событиями гонки.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#f97316",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "ru",
+  "categories": ["sports", "utilities", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.svg", 
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.svg",
+      "sizes": "180x180", 
+      "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Панель управления",
+      "short_name": "Панель",
+      "description": "Основная панель управления гонками",
+      "url": "/pits",
+      "icons": [{"src": "/icon-192.svg", "sizes": "192x192"}]
+    },
+    {
+      "name": "Режим волны",
+      "short_name": "Волна",
+      "description": "Специальный режим для отслеживания",
+      "url": "/pits/focus",
+      "icons": [{"src": "/icon-192.svg", "sizes": "192x192"}]
+    }
+  ],
+  "prefer_related_applications": false
+}
