@@ -29,7 +29,7 @@ export default function TeamRow({ team }: TeamRowProps) {
 
         {/* Karts zone - center aligned */}
         <div className="flex-1 flex items-center justify-start flex-wrap gap-2">
-          {team.karts.map((kart, index) => (
+          {team.karts.toReversed().map((kart, index) => (
             <div key={index}>
               <Kart kart={kart} />
             </div>
